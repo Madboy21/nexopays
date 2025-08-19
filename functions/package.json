@@ -1,0 +1,9 @@
+{
+  "name": "tg-miniapp-functions",
+  "engines": { "node": "20" },
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.0.1",
+    "cors": "^2.8.5"
+  }
+}

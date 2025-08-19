@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthed() { return request.auth != null; }
+    function isSelf(userId) { return isAuthed() && request.auth.uid == userId; }
+    function isAdmin() { return isAuthed() && request.auth.token.isAdmin == true; }
+
+    match /users/{userId} {
+      allow read: if isSelf(userId) || isAdmin();
+      allow create: if isAuthed() && request.auth.uid == userId;
+      allow update: if isSelf(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /withdrawRequests/{reqId} {
+      allow create: if isSelf(request.resource.data.userId);
+      allow read: if isAdmin() || (isAuthed() && resource.data.userId == request.auth.uid);
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /adminLogs/{id} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
